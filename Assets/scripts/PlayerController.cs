@@ -32,14 +32,21 @@ public class PlayerController : MonoBehaviour
         {
             jumpKeyHeld = false;
         }
-        Vector2 move = new Vector2(Input.GetAxis("Horizontal") * speed, 0f);
-        move = move.normalized * Time.deltaTime * speed;
-        playerRigidBody.AddForce(move);
-
+        if (isGrounded && Input.GetAxis("Horizontal") == 0)
+        {
+            playerRigidBody.velocity = Vector2.zero;
+        }
+        else
+        {
+            Vector2 move = new Vector2(Input.GetAxis("Horizontal") * speed, 0f);
+            move = move.normalized * Time.deltaTime * speed;
+            playerRigidBody.AddForce(move);
+        }
     }
 
     void FixedUpdate()
     {
+
         if (isJumping)
         {
             if (!jumpKeyHeld && Vector2.Dot(playerRigidBody.velocity, Vector2.up) > 0)
