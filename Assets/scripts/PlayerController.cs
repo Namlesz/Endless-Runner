@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -25,7 +23,7 @@ public class PlayerController : MonoBehaviour
             if (isGrounded)
             {
                 isJumping = true;
-                playerRigidBody.AddForce(Vector2.up * jumpForce * playerRigidBody.mass, ForceMode2D.Impulse);
+                playerRigidBody.AddForce(Vector2.up * jumpForce * playerRigidBody.mass* Time.fixedDeltaTime, ForceMode2D.Impulse);
             }
         }
         else if (Input.GetButtonUp("Jump"))
@@ -39,26 +37,31 @@ public class PlayerController : MonoBehaviour
         else
         {
             Vector2 move = new Vector2(Input.GetAxis("Horizontal") * speed, 0f);
-            move = move.normalized * Time.deltaTime * speed;
+            move = move.normalized * Time.fixedDeltaTime * speed;
             playerRigidBody.AddForce(move);
         }
     }
 
     void FixedUpdate()
     {
+        if (Input.GetKey(KeyCode.R))
+        {
+            Time.timeScale = 0.5f;
+            Time.fixedDeltaTime = 0.02F * Time.timeScale;
+        }
+        else
+        {
+            Time.timeScale = 1;
+            Time.fixedDeltaTime = 0.02F;
+        }
 
         if (isJumping)
         {
             if (!jumpKeyHeld && Vector2.Dot(playerRigidBody.velocity, Vector2.up) > 0)
             {
-                playerRigidBody.AddForce(counterJumpForce * playerRigidBody.mass);
+                playerRigidBody.AddForce(counterJumpForce * playerRigidBody.mass* Time.fixedDeltaTime);
             }
         }
-    }
-
-    public static float CalculateJumpForce(float gravityStrength, float jumpHeight)
-    {
-        return Mathf.Sqrt(2 * gravityStrength * jumpHeight);
     }
 
     void OnCollisionEnter2D(Collision2D col)
