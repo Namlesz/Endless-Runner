@@ -7,14 +7,13 @@ public class PlayerController : MonoBehaviour
     bool isGrounded;
     bool isJumping;
     bool jumpKeyHeld;
-    float jumpForce;
+    public float jumpForce;
     public float speed;
     Vector2 counterJumpForce;
     private Rigidbody2D playerRigidBody;
     void Start()
     {
         playerRigidBody = GetComponent<Rigidbody2D>();
-        jumpForce = CalculateJumpForce(Physics2D.gravity.magnitude, 5.0f);
     }
 
     // Update is called once per frame
@@ -33,8 +32,9 @@ public class PlayerController : MonoBehaviour
         {
             jumpKeyHeld = false;
         }
-
-        playerRigidBody.AddForce(new Vector2(Input.GetAxis("Horizontal") *speed, 0f));
+        Vector2 move = new Vector2(Input.GetAxis("Horizontal") * speed, 0f);
+        move = move.normalized * Time.deltaTime * speed;
+        playerRigidBody.AddForce(move);
 
     }
 
